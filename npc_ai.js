@@ -23,7 +23,10 @@ class AStar {
     }
 
     getNeighbors(node) {
-        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        const directions = [
+            [-1, 0], [1, 0], [0, -1], [0, 1],
+            [-1, -1], [-1, 1], [1, -1], [1, 1]
+        ];
         const neighbors = [];
         for (const [dx, dy] of directions) {
             const x = node.x + dx;
