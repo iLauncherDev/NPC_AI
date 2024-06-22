@@ -454,7 +454,16 @@ game.start_function = function (engine) {
      * @param {iLGE_2D_Object} object 
      */
     npc.alert = function (object) {
-        this.target = new iLGE_2D_Vector2(object.x, object.y);
+        this.target = classic_map.getArrayCellCenter(
+            classic_map.getArrayVector(
+                new iLGE_2D_Vector2(
+                    object.x + object.width / 2,
+                    object.y + object.height / 2,
+                )
+            )
+        );
+        this.target.x -= this.width / 2;
+        this.target.y -= this.height / 2;
     }
 
     /**

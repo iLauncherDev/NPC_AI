@@ -25,23 +25,53 @@ class AStar {
     getNeighbors(node) {
         const directions = [
             [-1, 0], [1, 0], [0, -1], [0, 1],
-            [-1, -1], [-1, 1], [1, -1], [1, 1]
+        ];
+        const diagonalTop = [
+            [-1, -1], [1, -1]
+        ];
+        const diagonalBottom = [
+            [-1, 1], [1, 1]
         ];
         const neighbors = [];
+        let freeDiagonalTop = 0;
+        let freeDiagonalBottom = 0;
+
+        const checkSafeZone = (x, y) => {
+            if (y >= 0 && y < this.matrix.array.length && x >= 0 && x < this.matrix.array[y].length) {
+                const zone = this.matrix.array[y][x];
+                return this.matrix.safe_zones.includes(zone);
+            }
+            return false;
+        };
+
+        for (const [dx, dy] of [...diagonalTop, ...[[0, -1], [-1, 0], [1, 0]]]) {
+            if (checkSafeZone(node.x + dx, node.y + dy))
+                freeDiagonalTop++;
+        }
+        for (const [dx, dy] of [...diagonalBottom, ...[[0, 1], [-1, 0], [1, 0]]]) {
+            if (checkSafeZone(node.x + dx, node.y + dy))
+                freeDiagonalBottom++;
+        }
+
+        if (freeDiagonalTop > 2) {
+            directions.push([-1, -1]);
+            if (freeDiagonalTop > 4)
+                directions.push([1, -1]);
+        }
+        if (freeDiagonalBottom > 2) {
+            directions.push([-1, 1]);
+            if (freeDiagonalBottom > 4)
+                directions.push([1, 1]);
+        }
+
         for (const [dx, dy] of directions) {
             const x = node.x + dx;
             const y = node.y + dy;
-
-            if (y >= 0 && y < this.matrix.array.length && x >= 0 && x < this.matrix.array[y].length) {
-                let zone = this.matrix.array[y][x];
-                for (let safe_zone of this.matrix.safe_zones) {
-                    if (safe_zone === zone) {
-                        neighbors.push(new AStar_Node(x, y, node));
-                        break;
-                    }
-                }
+            if (checkSafeZone(x, y)) {
+                neighbors.push(new AStar_Node(x, y, node));
             }
         }
+
         return neighbors;
     }
 
